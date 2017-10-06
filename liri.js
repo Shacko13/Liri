@@ -1,15 +1,17 @@
 
-var keys = require("./keys.js");
+var keys = require('./keys.js');
 
 var Twitter = require('twitter');
 
+var Spotify = require('spotify');
+
 var getMyTweets = function() {
 
-	var client = new Twitter(keys.twitterKeys)
+var client = new Twitter(keys.twitterKeys);
 
-	var params = {screen_name: 'sshackenstein'};
+var params = {screen_name: 'sshackenstein'};
 
-	// Getting timeline statuses
+// Getting timeline statuses
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
 		if (!error) {
 			//console.log(tweets);
@@ -22,12 +24,20 @@ var getMyTweets = function() {
 	});	
 }
 
+spotify.search({ type: 'track', query: 'the sign' }, function(err, data) {
+  if (err) {
+     return console.log('Error occurred: ' + err);
+     }
+ 
+console.log(data.tracks.items[0]); 
+});
+
 var pick = function(caseData, functionData) {
 	switch(caseData) {
 		case 'my-tweets' :
 			getMyTweets();
 			break;
-		default;
+		default:
 		console.log('LIRI does not know that');
 	}
 }
