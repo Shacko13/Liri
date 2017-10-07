@@ -1,11 +1,13 @@
 
 var keys = require('./keys.js');
 
+var command = process.argv[2];
+
 var Twitter = require('twitter');
 
-var Spotify = require('spotify');
+var Spotify = require('node-spotify-api');
 
-var getMyTweets = function() {
+var spotify = new Spotify(keys.spotifyKey);
 
 var client = new Twitter(keys.twitterKeys);
 
@@ -13,37 +15,32 @@ var params = {screen_name: 'sshackenstein'};
 
 // Getting timeline statuses
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
-		if (!error) {
+		if (!error && command === "my-tweets") {
 			//console.log(tweets);
 			for (var i = 0; i < tweets.length; i++) {
-				console.log(tweets[i].created_at);
 				console.log(' ');
-				console.log(tweets[i].text);
+				console.log(tweets[i].created_at + "\n" + tweets[i].text);
+				console.log(' ');
+				
 			}
 		}
 	});	
-}
 
-spotify.search({ type: 'track', query: 'the sign' }, function(err, data) {
-  if (err) {
-     return console.log('Error occurred: ' + err);
+if(command === "spotify-this-song") {
+
+spotify.search({ type: 'track', query: 'Truckin' }, function(err, data) {
+  if (!err) {
+     var musicInfo = data.tracks.items;
+
+     for (var j = 0; j < musicInfo.length; j++) {
+      console.log(" ");
+      console.log("Artist(s): " + musicInfo[j].artists[0].name); 
+      console.log("Song name: " + musicInfo[j].name);
+      console.log("Preview Link: " + musicInfo[j].preview_url);
+      console.log("Album: " + musicInfo[j].album.name + "\n");
      }
- 
-console.log(data.tracks.items[0]); 
+    } 
 });
-
-var pick = function(caseData, functionData) {
-	switch(caseData) {
-		case 'my-tweets' :
-			getMyTweets();
-			break;
-		default:
-		console.log('LIRI does not know that');
-	}
 }
 
-var runThis = function(argOne, argTwo) {
-	pick(argOne, argTwo);
-};
 
-runThis(process.argv[2], process.argv[3]);
